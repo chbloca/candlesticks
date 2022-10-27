@@ -46,6 +46,8 @@ class Candlesticks extends StatefulWidget {
 
   final CandleSticksStyle? style;
 
+  final DateTime? onDateTime;
+
   const Candlesticks({
     Key? key,
     required this.candles,
@@ -57,8 +59,8 @@ class Candlesticks extends StatefulWidget {
     this.indicators,
     this.onRemoveIndicator,
     this.style,
-  })  : assert(candles.length == 0 || candles.length > 1,
-            "Please provide at least 2 candles"),
+    this.onDateTime,
+  })  : assert(candles.length == 0 || candles.length > 1, "Please provide at least 2 candles"),
         super(key: key);
 
   @override
@@ -68,7 +70,7 @@ class Candlesticks extends StatefulWidget {
 class _CandlesticksState extends State<Candlesticks> {
   /// index of the newest candle to be displayed
   /// changes when user scrolls along the chart
-  int index = -10;
+  late int index;
   double lastX = 0;
   int lastIndex = -10;
 
@@ -84,8 +86,16 @@ class _CandlesticksState extends State<Candlesticks> {
   @override
   void initState() {
     super.initState();
-    if (widget.candles.length == 0) {
+    final candlesLength = widget.candles.length;
+    if (candlesLength == 0) {
       return;
+    } else if (widget.onDateTime != null) {
+      // TODO: only works for the available list of candles. Make it work for date times older than the oldest available candlestick
+      final indexOfDesiredDateTime = widget.candles
+          .indexWhere((e) => e.date.month == widget.onDateTime?.month && e.date.day == widget.onDateTime?.day);
+      index = indexOfDesiredDateTime;
+    } else {
+      index = -10;
     }
     if (mainWindowDataContainer == null) {
       mainWindowDataContainer =
