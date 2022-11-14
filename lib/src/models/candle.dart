@@ -35,7 +35,7 @@ class Candle {
   });
 
   Candle.fromJson(List<dynamic> json)
-      : date = DateTime.fromMillisecondsSinceEpoch(json[0]),
+      : date = DateTime.fromMillisecondsSinceEpoch(json[0] is int ? json[0] : int.parse(json[0])),
         high = double.parse(json[2]),
         low = double.parse(json[3]),
         open = double.parse(json[1]),
